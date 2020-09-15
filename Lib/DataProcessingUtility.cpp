@@ -65,7 +65,7 @@ bool DataProcessor::isDataDouble(const std::string& data)
 
 void DataProcessor::fillNaN(std::vector<double>& doubleVector, size_t length)
 {
-    for(int i = 0; i < length; i++)
+    for(size_t i = 0; i < length; i++)
     {
         doubleVector.push_back(std::numeric_limits<double>::quiet_NaN());
     }
