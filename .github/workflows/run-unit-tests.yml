@@ -1,0 +1,31 @@
+name: Build and Run Unit Tests
+
+on:
+  pull_request:
+  push:
+    branches: [ master ]
+    paths-ignore: [ docs/* ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    # - name: install cppcheck static analysis
+    #   run: sudo apt-get update && sudo apt-get install -y cppcheck
+    
+    # - name: static analysis (SenderModule)
+    #   run: cppcheck -q --enable=all --error-exitcode=1 --suppress=missingIncludeSystem --suppress='*:Lib/catch*' SenderModule/CSVReader_test.cpp SenderModule/CSVReader.cpp SenderModule/Timer.cpp 
+    
+    - name: build CSVReader
+      run: g++ -Wall -Wextra -Werror --coverage -o testchecker SenderModule/CSVReader_test.cpp SenderModule/CSVReader.cpp SenderModule/main_test.cpp
+      
+    - name: test CSVReader
+      run: ./testchecker
+    
+    - name: CSVReader test coverage report
+      run: gcov -r SenderModule/CSVReader_test.cpp SenderModule/CSVReader.cpp
+  
