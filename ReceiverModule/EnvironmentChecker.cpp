@@ -1,101 +1,97 @@
-#include<iostream>
-#include<string>
+#include <iostream>
+#include <string>
+#include <vector>
+#include "Alerter.hpp"
+
 using namespace std;
-class Alerter
-{
-    public:
-    void raiseAlert(const char* level,string& name ,const char* message )
-    {
-        cout<<"["<<level<<"] "<<name<<" is "<<message<<endl;
-    }
-};
-
-
 class RangeChecker
 {
-  private:
-    Alerter* alert;
-    int lower;
-    int upper;
-    int maxlimit;
-    int minlimit;
-    string name; 
-  public:
-    RangeChecker(string pname,int up,int mxlimit,int low=0,int mnlimit=0)
+private:
+  Alerter *alert;
+  int lower;
+  int upper;
+  int maxlimit;
+  int minlimit;
+  string name;
+
+public:
+  RangeChecker(const string& pname, int up, int mxlimit, int low = 0, int mnlimit = 0)
+  {
+    name = pname;
+    lower = low;
+    upper = up;
+    maxlimit = mxlimit;
+    minlimit = mnlimit;
+  }
+  std::string checkwhetherlowpara(double value)
+  {
+    std::string log_message = "";
+    if (value <= lower && value >= minlimit)
     {
-      name=pname;
-      lower = low;
-      upper = up;
-      maxlimit=mxlimit;
-      minlimit=mnlimit;
+      log_message = alert->raiseAlert("Warning", name, "Low");
     }
-    void checkwhetherlowpara(float value)
+    return log_message;
+  }
+  std::string checkwhetherhighpara(double value)
+  {
+    std::string log_message = "";
+    if (value >= upper && value <= maxlimit)
     {
-        if(value <= lower && value>=minlimit ) 
-      {
-        //cout<<"Warning Low "<<name<<"!"<<endl;
-        alert->raiseAlert("Warning",name,"Low");
-      }
+      log_message = alert->raiseAlert("Warning", name, "High");
     }
-    void checkwhetherhighpara(float value)
+    return log_message;
+  }
+  std::string checkwhetherveryhighpara(double value)
+  {
+    std::string log_message = "";
+    if (value > maxlimit)
     {
-        if(value >= upper && value <=maxlimit) 
-      {
-        alert->raiseAlert("Warning",name,"High");
-      }
+      log_message = alert->raiseAlert("Error", name, "Very High");
     }
-    void checkwhetherveryhighpara(float value)
+    return log_message;
+  }
+  std::string checkwhetherverylowpara(double value)
+  {
+    std::string log_message = "";
+    if (value < minlimit)
     {
-        if(value>maxlimit)
-      {
-        alert->raiseAlert("Error",name,"Very High");
-      }
+      log_message = alert->raiseAlert("Error", name, " Very Low");
     }
-    void checkwhetherverylowpara(float value)
-    {
-    if(value<minlimit)
-      {
-        alert->raiseAlert("Error",name," Very Low");
-      }
-    }
-    void checkAgainstRange(float value)
-    {
-      checkwhetherhighpara(value);
-      checkwhetherlowpara(value);
-      checkwhetherveryhighpara(value);
-      checkwhetherverylowpara(value);
-    }
+    return log_message;
+  }
+  std::vector<std::string> checkAgainstRange(double value)
+  {
+    std::vector<std::string> Logs;
+    Logs.push_back(checkwhetherhighpara(value));
+    Logs.push_back(checkwhetherlowpara(value));
+    Logs.push_back(checkwhetherveryhighpara(value));
+    Logs.push_back(checkwhetherverylowpara(value));
+    return Logs;
+  }
 };
 
 class EnvironmentChecker
 {
-  private:
-    int hightemp,veryhightemp,lowtemp,verylowtemp;
-    int highhum,veryhighhum;
-    RangeChecker tem,hum;
-  public:
-    EnvironmentChecker(int high,int veryhigh,int low,int verylow,int highhum,int veryhighum):
-      hightemp(high),
-      veryhightemp(veryhigh),
-      lowtemp(low),
-      verylowtemp(verylow),
-      highhum(highhum),
-      veryhighhum(veryhighum),
-    tem("Temperature",hightemp,veryhightemp,lowtemp,verylowtemp),
-      hum("Humidity",highhum,veryhighhum)
-      
-    {}
-    void checkAllParameters(float temp, float humidity)
-    {
-      tem.checkAgainstRange(temp);
-      hum.checkAgainstRange(humidity);
-    }
-};
+private:
+  int hightemp, veryhightemp, lowtemp, verylowtemp;
+  int highhum, veryhighhum;
+  RangeChecker tem, hum;
 
-int main() {
-  EnvironmentChecker parameters(37,40,4,0,70,90);
-  parameters.checkAllParameters(34, 66);
-  parameters.checkAllParameters(40, 78);
-  parameters.checkAllParameters(-1, 92);
-  parameters.checkAllParameters(2, 45);
-}
+public:
+  EnvironmentChecker(int high, int veryhigh, int low, int verylow, int highhum, int veryhighum) : hightemp(high),
+                                                                                                  veryhightemp(veryhigh),
+                                                                                                  lowtemp(low),
+                                                                                                  verylowtemp(verylow),
+                                                                                                  highhum(highhum),
+                                                                                                  veryhighhum(veryhighum),
+                                                                                                  tem("Temperature", hightemp, veryhightemp, lowtemp, verylowtemp),
+                                                                                                  hum("Humidity", highhum, veryhighhum)
+
+  {
+  }
+  std::vector<std::string> checkAllParameters(double temp, double humidity)
+  {
+    tem.checkAgainstRange(temp);
+    hum.checkAgainstRange(humidity);
+  }
+};
