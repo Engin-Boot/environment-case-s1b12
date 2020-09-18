@@ -9,6 +9,8 @@ class Alerter
         cout<<"["<<level<<"] "<<name<<" is "<<message<<endl;
     }
 };
+
+
 class RangeChecker
 {
   private:
