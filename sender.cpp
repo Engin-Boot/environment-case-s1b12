@@ -1,6 +1,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cmath>
 #include "SenderModule/CSVReader.hpp"
 #include "SenderModule/Timer.hpp"
 #include "Lib/DataProcessingUtility.hpp"
@@ -38,6 +39,12 @@ TemperatureHumiditySensorData GetSensorData(Reader* reader, TemperatureHumidityS
 }
 
 
+void send_data(TemperatureHumiditySensorData& sd)
+{
+    if(!std::isnan(sd.temperature) && !std::isnan(sd.humidity))
+        std::cout << sd.temperature << ", " << sd.humidity << std::endl;
+}
+
 int main()
 {
     std::string filepath = "testdata/temperature-humidity.csv";
@@ -48,7 +55,7 @@ int main()
     {
         timer.sleep_for(SENDER_LATENCY);
         TemperatureHumiditySensorData sd = GetSensorData(reader, th_SensorData);
-        std::cout << sd.temperature << ", " << sd.humidity << std::endl;
+        send_data(sd);
     }
     return 0;
 }
