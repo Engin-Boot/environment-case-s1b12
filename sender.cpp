@@ -48,7 +48,7 @@ void send_data(TemperatureHumiditySensorData& sd)
 int main()
 {
     std::string filepath = "testdata/temperature-humidity.csv";
-    CSVReader* reader = new CSVReader(filepath);
+    CSVReader* reader = new CSVReader(filepath); //
     TemperatureHumiditySensorData th_SensorData;
     Timer timer;
     while(reader->good())
