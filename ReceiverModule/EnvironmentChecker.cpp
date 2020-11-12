@@ -46,7 +46,7 @@ public:
     std::string log_message = "";
     if (value > maxlimit)
     {
-      log_message = alert->raiseAlert("Error", name, "Very High");
+      log_message = alert->raiseAlert("Error", name, "Too High");
     }
     return log_message;
   }
@@ -55,7 +55,7 @@ public:
     std::string log_message = "";
     if (value < minlimit)
     {
-      log_message = alert->raiseAlert("Error", name, " Very Low");
+      log_message = alert->raiseAlert("Error", name, " Too Low");
     }
     return log_message;
   }
