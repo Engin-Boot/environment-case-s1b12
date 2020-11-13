@@ -3,11 +3,6 @@
 
 Logger::Logger(int log_level):log_level(log_level) {}
 
-void Logger::setLevel(int level)
-{
-    log_level = level;
-}
-
 void Logger::info(const string& message)
 {
     if(log_level >= INFO)
