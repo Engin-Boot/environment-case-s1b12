@@ -10,8 +10,7 @@ class Logger
     private:
         unsigned int log_level = WARNING;
     public:
-        Logger(int log_level);
-        void setLevel(int level);
+        explicit Logger(int log_level);
         void info(const string& message);
         void warning(const string& message);
         void error(const string& message);
