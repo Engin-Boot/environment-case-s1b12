@@ -2,11 +2,19 @@
 #include <vector>
 #include <string>
 #include "Logger.hpp"
+
+#define HIGH_TEMPERATURE_LOWER_LIMIT 37
+#define HIGH_TEMPERATURE_UPPER_LIMIT 40
+#define LOW_TEMPERATURE_LOWER_LIMIT 0
+#define LOW_TEMPERATURE_UPPER_LIMIT 4
+#define HIGH_HUMIDITY_THRESHOLD 70
+#define VERY_HIGH_HUMIDITY_THRESHOLD 90 
+
 using namespace std;
 
 void checkwhetherhigtemp(Logger& log, double temp)
 {
-    if(temp>=37 && temp<=40)
+    if(temp >= HIGH_TEMPERATURE_LOWER_LIMIT && temp <= HIGH_TEMPERATURE_UPPER_LIMIT)
     {
         log.warning("High Temperature!!");
     }
@@ -14,7 +22,7 @@ void checkwhetherhigtemp(Logger& log, double temp)
 
 void checkwhetherveryhightemp(Logger& log, double temp)
 {
-    if(temp>40)
+    if(temp > HIGH_TEMPERATURE_UPPER_LIMIT)
     {
         log.error("High Temperature");
     }
@@ -22,7 +30,7 @@ void checkwhetherveryhightemp(Logger& log, double temp)
 
 void checkwhetherlowtemp(Logger& log, double temp)
 {
-    if(temp<=4&& temp >=0)
+    if(temp <= LOW_TEMPERATURE_UPPER_LIMIT && temp >= LOW_TEMPERATURE_LOWER_LIMIT)
     {
         log.warning("Low Temperature");
     }
@@ -30,7 +38,7 @@ void checkwhetherlowtemp(Logger& log, double temp)
 
 void checkwhetherverylowtemp(Logger& log, double temp)
 {
-    if(temp<0)
+    if(temp < LOW_TEMPERATURE_LOWER_LIMIT)
     {
         log.error("Low Temperature");
     }
@@ -38,7 +46,7 @@ void checkwhetherverylowtemp(Logger& log, double temp)
 
 void checkwhetherhighhumidity(Logger& log, double hum)
 {
-    if (hum>=70 && hum<=90)
+    if (hum >= HIGH_HUMIDITY_THRESHOLD && hum <= VERY_HIGH_HUMIDITY_THRESHOLD)
     {
         log.warning("High Humidity");
     }
@@ -46,9 +54,9 @@ void checkwhetherhighhumidity(Logger& log, double hum)
 
 void checkwhetherveryhighhumidity(Logger& log, double hum)
 {
-    if(hum>90)
+    if(hum > VERY_HIGH_HUMIDITY_THRESHOLD)
     {
-        log.error("High Humidity");
+        log.error("Very High Humidity");
     }
 }
 
