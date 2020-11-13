@@ -4,66 +4,18 @@
 #include <string>
 #include <ctime>
 #include<vector>
+#include "ReceiverModule/Logger.hpp"
+#include "ReceiverModule/environment_checker.hpp"
 #include"Lib/DataProcessingUtility.hpp"
 
 #define RECEIVER_TIMEOUT 5
+#define LOG_LEVEL_INFO 2
+#define LOG_LEVEL_WARNING 1
+#define LOG_LEVEL_ERROR 0
+
 using namespace std;
 
-void checkwhetherhigtemp(double temp)
-{
-    if(temp>=37 && temp<=40)
-    {
-        cout<<"Warning High Temperature!!"<<endl;
-    }
-}
-void checkwhetherveryhightemp(double temp)
-{
-    if(temp>40)
-    {
-        cout<<"Error High temperature"<<endl;
-    }
-}
-
-void checkwhetherlowtemp(double temp)
-{
-    if(temp<=4&& temp >=0)
-    {
-        cout<<"Warning Low Temperature"<<endl;
-    }
-
-}
-void checkwhetherverylowtemp(double temp)
-{
-    if(temp<0)
-    {
-        cout<<"Error Low Temperature"<<endl;
-    }
-}
-void checkwhetherhighhumidity(double hum)
-{
-    if (hum>=70 && hum<=90)
-    {
-        cout<<"Warning High Humidity"<<endl;
-    }
-}
-void checkwhetherveryhighhumidity(double hum)
-{
-    if(hum>90)
-    {
-        cout<<"Error High Humidity"<<endl;
-    }
-}
-
-void check_environment(vector<double> & v)
-{
-    checkwhetherhigtemp(v[0]);
-    checkwhetherlowtemp(v[0]);
-    checkwhetherveryhightemp(v[0]);
-    checkwhetherverylowtemp(v[0]);
-    checkwhetherhighhumidity(v[1]);
-    checkwhetherveryhighhumidity(v[1]);
-}
-void evaluate_data(string recv)
+void evaluate_data(string recv, Logger& log)
 {
     DataProcessor d;
     vector<string> vec;
@@ -75,7 +27,7 @@ void evaluate_data(string recv)
     }
     vector<double> vec1;
     d.populateDoubleVector(vec1,vec2,2);
-    check_environment(vec1);
+    check_environment(vec1, log);
 }
 
 bool AsyncGetline(std::string& recv)
@@ -84,22 +36,23 @@ bool AsyncGetline(std::string& recv)
     return isDataReceived;
 }
 
-void process(const std::string& recv, const std::string& timestamp)
+void process(const std::string& recv, const std::string& timestamp, Logger& log)
 {
     if (recv == "q")
         std::cout << "QUIT: USER INTERRUPT" << std::endl;
     else
     {
-        std::cout << timestamp << "INFO: " << recv << std::endl;
-        evaluate_data(recv);
+        std::cout << timestamp << " ";
+        log.info(recv);
+        evaluate_data(recv, log);
     }
 }
 
-void processIfDataReceived(bool isDataReceived, const std::string& recv, const std::string& timestamp)
+void processIfDataReceived(bool isDataReceived, const std::string& recv, const std::string& timestamp, Logger& log)
 {
     if(isDataReceived)
     {
-        process(recv, timestamp);
+        process(recv, timestamp, log);
     }
 }
 
@@ -113,6 +66,7 @@ int main()
 {
     std::string recv = "";
     bool isDataReceived = true;
+    Logger log(LOG_LEVEL_INFO);
     
     while (recv != "q" && isDataReceived)
     {
@@ -121,7 +75,7 @@ int main()
 
         if(timeout(fu))
         {
-            std::cout << "[FATAL] No Data received\n"; 
+            log.warning("No Data Received"); 
             exit(0);
         }
 
@@ -131,7 +85,7 @@ int main()
         std::time_t timestamp = std::chrono::system_clock::to_time_t(end_time);
         std::string s_timestamp = std::ctime(&timestamp);
 
-        processIfDataReceived(isDataReceived, recv, s_timestamp);
+        processIfDataReceived(isDataReceived, recv, s_timestamp, log);
     }
     return 0;
 }
